@@ -1,4 +1,6 @@
 import React, { Component } from "react";
+import authStore from "../../store/authStore";
+import { observer } from "mobx-react";
 
 // NativeBase Components
 import {
@@ -19,6 +21,19 @@ class Login extends Component {
   static navigationOptions = {
     title: "Login"
   };
+
+  constructror() {
+    this.state = {
+      username: "",
+      password: ""
+    };
+    this.LoginCheck = this.LoginCheck.bind(this);
+  }
+
+  LoginCheck() {
+    authStore.logInUser(this.state);
+  }
+
   render() {
     return (
       <Content>
@@ -38,7 +53,11 @@ class Login extends Component {
                     marginBottom: 10
                   }}
                 >
-                  <Input autoCorrect={false} autoCapitalize="none" />
+                  <Input
+                    autoCorrect={false}
+                    autoCapitalize="none"
+                    onChangeText={value => this.setState({ username: value })}
+                  />
                 </Item>
                 <Body>
                   <Label style={{ color: "white" }}>Password</Label>
@@ -51,22 +70,19 @@ class Login extends Component {
                     autoCorrect={false}
                     secureTextEntry
                     autoCapitalize="none"
+                    onChangeText={value => this.setState({ password: value })}
                   />
                 </Item>
               </Form>
             </Body>
           </ListItem>
-          <Button
-            full
-            success
-            onPress={() => this.props.navigation.replace("CoffeeList")}
-          >
+          <Button full success onPress={() => this.LoginCheck()}>
             <Text>Login</Text>
           </Button>
           <Button
             full
             warning
-            onPress={() => this.props.navigation.replace("CoffeeList")}
+            onPress={() => authStore.registerUser(this.state)}
           >
             <Text>Register</Text>
           </Button>
@@ -79,4 +95,4 @@ class Login extends Component {
   }
 }
 
-export default Login;
+export default observer(Login);
